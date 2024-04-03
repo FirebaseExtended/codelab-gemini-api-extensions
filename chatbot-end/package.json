@@ -1,0 +1,30 @@
+{
+  "name": "chatbot",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "firebase-init": "firebase init extensions && firebase init firestore && firebase init storage",
+    "firebase-init-hosting": "firebase experiments:enable webframeworks && firebase init hosting",
+    "firebase-init-apphosting": "firebase init apphosting",
+    "firebase-init-emulators": "firebase init emulators",
+    "firebase-deploy": "firebase deploy"
+  },
+  "dependencies": {
+    "react": "^18",
+    "react-dom": "^18",
+    "next": "14.1.4"
+  },
+  "devDependencies": {
+    "typescript": "^5",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.0.1",
+    "postcss": "^8",
+    "tailwindcss": "^3.3.0"
+  }
+}
