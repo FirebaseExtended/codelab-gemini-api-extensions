@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import NavLayout from "@/components/nav-layout";
-import FirebaseUserProvider from "./lib/firebase-user-context";
+import FirebaseUserProvider from "../lib/firebase-user";
 
 const inter = Inter({ subsets: ["latin"] });
 

@@ -4,7 +4,7 @@
  * Using Tailwind for all styling.
  */
 import React, { useContext } from "react";
-import { FirebaseUserContext } from "@/app/lib/firebase-user-context";
+import { FirebaseUserContext } from "@/lib/firebase-user";
 
 /**
  *

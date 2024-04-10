@@ -1,7 +1,6 @@
 "use client";
 
-import ChatContainer, { ChatMessageData } from "@/components/chat-container";
-import { use, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   getFirestore,
   collection,
@@ -10,8 +9,14 @@ import {
   addDoc,
   query,
   orderBy,
+  deleteDoc,
+  doc,
 } from "firebase/firestore";
-import { FirebaseUserContext } from "../lib/firebase-user-context";
+import ChatContainer, {
+  ChatMessageData,
+  ResponseData,
+} from "@/components/chat-container";
+import { FirebaseUserContext } from "@/lib/firebase-user";
 
 /**
  * A portal page with an ai chat.
@@ -26,7 +31,7 @@ const ChatPage = () => {
     {
       response: "Hi, I'm a **large language model**, trained by Google.",
       prompt: "I want to know more about you",
-      suggestedUserResponses: [
+      followUpQuestions: [
         "What is your name?",
         "I want to know more about you.",
         "Another longer message goes here and it wraps around.",
@@ -48,7 +53,23 @@ const ChatPage = () => {
       query(messagesCollection, orderBy("createTime", "asc")),
       {},
       (snapshot) => {
-        const messages = snapshot.docs.map((doc) => doc.data());
+        const messages = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          if (data.response) {
+            try {
+              const parseResponse = JSON.parse(data.response) as ResponseData;
+              // Prepare view model for the generated response.
+              data.response = parseResponse.text;
+              data.followUpQuestions = parseResponse.followUpQuestions;
+            } catch (e) {
+              // The response is not a valid JSON, just display it as text.
+            }
+          }
+          return {
+            id: doc.id,
+            ...data,
+          };
+        });
         console.log(
           "Doc changes: ",
           snapshot
@@ -61,19 +82,26 @@ const ChatPage = () => {
     return unsubscribe;
   }, [uid]);
 
-  /** Send a message to the assistant. */
+  /** Send a message to Gemini Extension. */
   const sendMessage = async (userMsg: string) => {
-    const newMessageRef = await addDoc(messagesCollection, {
+    const data: ChatMessageData = {
       prompt: userMsg,
-    });
+    };
+    setMessages((prev) => [...prev, data]);
+    const newMessageRef = await addDoc(messagesCollection, data);
     console.log("New message added with ID: ", newMessageRef.id);
-    // setMessages((prev) => [...prev, newMessage]);
+  };
+
+  /** Delete a message pair. */
+  const deleteMessage = async (messageId: string) => {
+    await deleteDoc(doc(messagesCollection, messageId));
   };
 
   return (
     <ChatContainer
       messages={messages}
       onMessageSubmit={sendMessage}
+      onMessageDelete={deleteMessage}
     ></ChatContainer>
   );
 };

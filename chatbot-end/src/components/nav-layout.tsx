@@ -1,7 +1,7 @@
 "use client";
 
-import { FirebaseUserContext } from "@/app/lib/firebase-user-context";
 import React, { useContext, useState } from "react";
+import { FirebaseUserContext } from "@/lib/firebase-user";
 
 export interface NavLayoutProps {
   children: React.ReactNode;

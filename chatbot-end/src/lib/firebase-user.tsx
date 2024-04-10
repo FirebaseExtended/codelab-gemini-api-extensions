@@ -9,8 +9,8 @@ import {
   UserCredential,
 } from "firebase/auth";
 import React, { useEffect, useState } from "react";
-import "./firebase.config";
 import SignInContainer from "@/components/signin-container";
+import "@/lib/firebase.config";
 
 export interface FirebaseUser {
   isLoading?: boolean;
@@ -57,8 +57,8 @@ const FirebaseUserProvider: React.FC<FirebaseUserProviderProps> = ({
       {user?.isSignedIn === true && children}
       {user?.isSignedIn === false && <SignInContainer />}
       {user?.isLoading && (
-        <div className="flex text-center mt-5 text-xl font-bold text-gray-500 w-full justify-center items-center h-full">
-          Loading...
+        <div className="flex min-h-screen items-center justify-center text-gray-400">
+          <div>Loading...</div>
         </div>
       )}
     </FirebaseUserContext.Provider>
