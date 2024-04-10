@@ -2,6 +2,8 @@
 
 This is the codelab code for Gemini API extensions
 
+[Open the repo in Project IDX](https://idx.google.com/import?url=https://github.com/FirebaseExtended/codelab-gemini-api-extensions/archive/refs/heads/)
+
 ## Source Code Headers
 
 Every file containing source code must include copyright and license

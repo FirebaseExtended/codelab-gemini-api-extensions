@@ -29,5 +29,6 @@ On Firebase App Hosting
 
 ```bash
 npm run firebase-init-apphosting
-npm run firebase-deploy
 ```
+
+Push to GitHub

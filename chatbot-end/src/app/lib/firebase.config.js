@@ -5,12 +5,12 @@ import { initializeApp } from "firebase/app";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBltR7rV4ujPQC1MRr_SddcyhlkEyRAb4A",
-  authDomain: "ai-extensions-codelab-ecf6c.firebaseapp.com",
-  projectId: "ai-extensions-codelab-ecf6c",
-  storageBucket: "ai-extensions-codelab-ecf6c.appspot.com",
-  messagingSenderId: "577393246757",
-  appId: "1:577393246757:web:00bb067ded19e07a34f5cc",
+  apiKey: "AIzaSyAyqSFfJRqX1keXbGwbx3SaM7pIiRXwhHI",
+  authDomain: "gemini-extension-5b686.firebaseapp.com",
+  projectId: "gemini-extension-5b686",
+  storageBucket: "gemini-extension-5b686.appspot.com",
+  messagingSenderId: "1057376381563",
+  appId: "1:1057376381563:web:b6b898ebb96b1b72bb10de",
 };
 
 // Initialize Firebase
