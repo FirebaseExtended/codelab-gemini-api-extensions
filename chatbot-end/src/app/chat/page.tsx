@@ -4,20 +4,22 @@ import { useContext, useEffect, useState } from "react";
 import {
   getFirestore,
   collection,
-  onSnapshot,
   CollectionReference,
-  addDoc,
   query,
   orderBy,
-  deleteDoc,
+  onSnapshot,
   doc,
+  addDoc,
+  deleteDoc,
 } from "firebase/firestore";
-import ChatContainer, {
-  ChatMessageData,
-  ResponseData,
-} from "@/components/chat-container";
+import ChatContainer from "@/components/chat-container";
 import { FirebaseUserContext } from "@/lib/firebase-user";
-import { prepareFollowUpPrompt, processResponse } from "@/lib/parser";
+import {
+  prepareFollowUpPrompt,
+  prepareMessage,
+  FirestoreMessageData,
+  MessageData,
+} from "@/lib/prompt-utils";
 
 /**
  * A portal page with an ai chat.
@@ -28,7 +30,7 @@ import { prepareFollowUpPrompt, processResponse } from "@/lib/parser";
  * with `use` hook.
  */
 const ChatPage = () => {
-  const [messages, setMessages] = useState<ChatMessageData[]>([]);
+  const [messages, setMessages] = useState<MessageData[]>([]);
 
   const user = useContext(FirebaseUserContext);
   const uid = user.currentUser?.uid;
@@ -36,7 +38,7 @@ const ChatPage = () => {
   const messagesCollection = collection(
     getFirestore(),
     `users/${uid}/messages`
-  ) as CollectionReference<ChatMessageData>;
+  ) as CollectionReference<FirestoreMessageData>;
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -45,7 +47,7 @@ const ChatPage = () => {
       (snapshot) => {
         const messages = snapshot.docs.map((doc) => ({
           id: doc.id,
-          ...processResponse(doc.data()),
+          ...prepareMessage(doc.data()),
         }));
         console.log(
           "Doc changes: ",

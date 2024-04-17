@@ -1,36 +1,10 @@
 import React from "react";
 import MarkdownContainer from "@/components/markdown-container";
-import { Timestamp } from "firebase/firestore";
 import useAutoFocus from "@/app/hooks/use-auto-focus";
-
-export interface ChatMessageData {
-  id?: string;
-  prompt: string;
-  injectedContext?: string;
-  response?: string;
-  followUpPrompts?: string[];
-
-  /** Document creation time. */
-  createTime?: Timestamp;
-
-  status?: {
-    state: "COMPLETED" | "PROCESSING" | "ERROR";
-    /** Generation start time. */
-    startTime: Timestamp;
-    /** Generation completion time. */
-    completeTime?: Timestamp;
-    /** Last status change time (populated on each status change, including errors). */
-    updateTime: Timestamp;
-    error?: string;
-  };
-}
-
-export interface ResponseData {
-  followUpPrompts?: string[];
-}
+import { MessageData } from "@/lib/prompt-utils";
 
 export interface ChatContainerProps {
-  messages: ChatMessageData[];
+  messages: MessageData[];
   onMessageSubmit: (userMsg: string) => Promise<void>;
   onMessageDelete: (messageId: string) => Promise<void>;
 }
