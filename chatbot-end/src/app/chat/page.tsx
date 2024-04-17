@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
   getFirestore,
   collection,
@@ -35,10 +35,14 @@ const ChatPage = () => {
   const user = useContext(FirebaseUserContext);
   const uid = user.currentUser?.uid;
 
-  const messagesCollection = collection(
-    getFirestore(),
-    `users/${uid}/messages`
-  ) as CollectionReference<FirestoreMessageData>;
+  const messagesCollection = useMemo(
+    () =>
+      collection(
+        getFirestore(),
+        `users/${uid}/messages`
+      ) as CollectionReference<FirestoreMessageData>,
+    [uid]
+  );
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -50,10 +54,10 @@ const ChatPage = () => {
           ...prepareMessage(doc.data()),
         }));
         console.log(
-          "Doc changes: ",
+          "Message doc changes: ",
           snapshot
             .docChanges()
-            .map((ch) => ({ type: ch.type, doc: ch.doc.data() }))
+            .map((ch) => ({ type: ch.type, id: ch.doc.id, doc: ch.doc.data() }))
         );
         setMessages(messages);
       }

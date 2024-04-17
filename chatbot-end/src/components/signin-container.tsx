@@ -1,13 +1,10 @@
-/**
- * Sign in with Google button, using Firebase Auth
- *
- * Using Tailwind for all styling.
- */
 import React, { useContext } from "react";
 import { FirebaseUserContext } from "@/lib/firebase-user";
 
 /**
+ * Sign in with Google button, using Firebase Auth
  *
+ * Using Tailwind for all styling.
  */
 const SignInContainer: React.FC<{}> = ({}) => {
   const user = useContext(FirebaseUserContext);
