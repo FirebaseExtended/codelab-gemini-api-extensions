@@ -17,6 +17,7 @@ import ChatContainer, {
   ResponseData,
 } from "@/components/chat-container";
 import { FirebaseUserContext } from "@/lib/firebase-user";
+import { prepareFollowUpPrompt, processResponse } from "@/lib/parser";
 
 /**
  * A portal page with an ai chat.
@@ -27,18 +28,7 @@ import { FirebaseUserContext } from "@/lib/firebase-user";
  * with `use` hook.
  */
 const ChatPage = () => {
-  const [messages, setMessages] = useState<ChatMessageData[]>([
-    {
-      response: "Hi, I'm a **large language model**, trained by Google.",
-      prompt: "I want to know more about you",
-      followUpQuestions: [
-        "What is your name?",
-        "I want to know more about you.",
-        "Another longer message goes here and it wraps around.",
-        "This is even more text.",
-      ],
-    },
-  ]);
+  const [messages, setMessages] = useState<ChatMessageData[]>([]);
 
   const user = useContext(FirebaseUserContext);
   const uid = user.currentUser?.uid;
@@ -53,23 +43,10 @@ const ChatPage = () => {
       query(messagesCollection, orderBy("createTime", "asc")),
       {},
       (snapshot) => {
-        const messages = snapshot.docs.map((doc) => {
-          const data = doc.data();
-          if (data.response) {
-            try {
-              const parseResponse = JSON.parse(data.response) as ResponseData;
-              // Prepare view model for the generated response.
-              data.response = parseResponse.text;
-              data.followUpQuestions = parseResponse.followUpQuestions;
-            } catch (e) {
-              // The response is not a valid JSON, just display it as text.
-            }
-          }
-          return {
-            id: doc.id,
-            ...data,
-          };
-        });
+        const messages = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...processResponse(doc.data()),
+        }));
         console.log(
           "Doc changes: ",
           snapshot
@@ -82,13 +59,13 @@ const ChatPage = () => {
     return unsubscribe;
   }, [uid]);
 
-  /** Send a message to Gemini Extension. */
   const sendMessage = async (userMsg: string) => {
-    const data: ChatMessageData = {
-      prompt: userMsg,
-    };
-    setMessages((prev) => [...prev, data]);
-    const newMessageRef = await addDoc(messagesCollection, data);
+    // Display the user message immediately.
+    setMessages((prev) => [...prev, { prompt: userMsg }]);
+    // Send a message to Gemini Extension.
+    const newMessageRef = await addDoc(messagesCollection, {
+      prompt: prepareFollowUpPrompt(userMsg, messages),
+    });
     console.log("New message added with ID: ", newMessageRef.id);
   };
 

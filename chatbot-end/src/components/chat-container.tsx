@@ -6,8 +6,9 @@ import useAutoFocus from "@/app/hooks/use-auto-focus";
 export interface ChatMessageData {
   id?: string;
   prompt: string;
+  injectedContext?: string;
   response?: string;
-  followUpQuestions?: string[];
+  followUpPrompts?: string[];
 
   /** Document creation time. */
   createTime?: Timestamp;
@@ -25,8 +26,7 @@ export interface ChatMessageData {
 }
 
 export interface ResponseData {
-  text: string;
-  followUpQuestions: string[];
+  followUpPrompts?: string[];
 }
 
 export interface ChatContainerProps {
@@ -65,6 +65,8 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
   const [userMessage, setUserMessage] = React.useState("");
   const userMessageAutoFocus = useAutoFocus();
 
+  const prevMessagesCountRef = React.useRef(messages.length);
+
   const endOfChatRef = React.useRef<HTMLDivElement>(null);
   const scrollToBottom = () => {
     if (endOfChatRef.current) {
@@ -75,7 +77,11 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
   };
 
   React.useEffect(() => {
-    scrollToBottom();
+    // Do not auto-scroll if removing a message.
+    if (prevMessagesCountRef.current <= messages.length) {
+      scrollToBottom();
+    }
+    prevMessagesCountRef.current = messages.length;
   }, [messages]);
 
   const handleUserMessageSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -152,13 +158,13 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       <div className="border-t border-gray-200 py-4">
         <form onSubmit={handleUserMessageSubmit}>
           <div className="items-center">
-            {messages[messages.length - 1]?.followUpQuestions
+            {messages[messages.length - 1]?.followUpPrompts
               ?.slice(0, 4)
               .map((sugestion) => (
                 <button
                   key={sugestion}
                   type="button"
-                  className="flex-1 mr-2 mb-2 bg-blue-100 hover:bg-blue-200 text-gray-700 px-4 py-2 rounded-md"
+                  className="flex-1 mr-2 mb-2 bg-blue-100 hover:bg-blue-200 text-gray-700 px-4 py-2 rounded-md text-left"
                   onClick={() => onMessageSubmit(sugestion)}
                 >
                   {sugestion}
