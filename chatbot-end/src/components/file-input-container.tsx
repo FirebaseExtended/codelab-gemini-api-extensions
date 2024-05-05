@@ -44,10 +44,6 @@ export const FileInputContainer: React.FC<FileInputContainerProps> = ({
       disabled: isUploading,
     } as any);
 
-  // if (acceptedFiles.length > 0) {
-  //   setFile(acceptedFiles[0]);
-  // } as any);
-
   const handleFileUpload = async () => {};
 
   return (
@@ -65,9 +61,9 @@ export const FileInputContainer: React.FC<FileInputContainerProps> = ({
           ...
         </p>
       ) : (
-        <p className="text-gray-300">
+        <button className="text-gray-300">
           Drag 'n' drop some files here, or click to select files to upload.
-        </p>
+        </button>
       )}
       {error && <p className="text-red-500">{error}</p>}
       {fileRejections && (

@@ -28,7 +28,7 @@ export interface FirebaseUserProviderProps {
   children: React.ReactNode;
 }
 
-/** Firebase Auth current user provider */
+/** Firebase Auth user provider */
 const FirebaseUserProvider: React.FC<FirebaseUserProviderProps> = ({
   children,
 }) => {

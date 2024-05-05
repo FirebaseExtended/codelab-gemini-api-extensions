@@ -1,7 +1,7 @@
 import React from "react";
 import MarkdownContainer from "@/components/markdown-container";
 import useAutoFocus from "@/app/hooks/use-auto-focus";
-import { MessageData } from "@/lib/prompt-utils";
+import { MessageData } from "@/lib/message";
 
 export interface ChatContainerProps {
   messages: MessageData[];
@@ -96,14 +96,17 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
                     </div>
                   )}
                 </div>
+
                 {!status?.state && (
                   <div className="text-gray-900 text-xs ml-4">Sending...</div>
                 )}
+
                 {status?.state === "PROCESSING" && (
                   <div className="ml-4 px-4 py-2 rounded-lg inline-block rounded-br-none text-gray-900 bg-gradient-to-r from-blue-100 to-purple-100 to-gray-100 text-xs ml-4">
                     Generating...
                   </div>
                 )}
+
                 {status?.error && (
                   <div className="ml-4 px-4 py-2 rounded-lg inline-block bg-red-200 text-red-800 rounded-br-none">
                     {status.error}
@@ -114,6 +117,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
                     )}
                   </div>
                 )}
+
                 {response && (
                   <div className="ml-4 px-4 py-2 rounded-lg inline-block bg-gradient-to-r from-blue-500 to-purple-500 to-gray-400 text-white rounded-br-none">
                     <MarkdownContainer markdown={response} />
@@ -129,6 +133,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
           );
         })}
       </div>
+
       <div className="border-t border-gray-200 py-4">
         <form onSubmit={handleUserMessageSubmit}>
           <div className="items-center">

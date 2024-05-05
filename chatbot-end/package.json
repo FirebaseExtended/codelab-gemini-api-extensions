@@ -9,12 +9,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "firebase-init": "firebase init extensions && firebase init firestore && firebase init storage",
-    "firebase-init-hosting": "firebase experiments:enable webframeworks && firebase init hosting",
-    "firebase-init-apphosting": "firebase experiments:enable apphosting && firebase init apphosting",
-    "firebase-init-emulators": "firebase init emulators",
-    "firebase-deploy": "firebase deploy"
+    "lint": "next lint"
   },
   "dependencies": {
     "dompurify": "^3.1.0",

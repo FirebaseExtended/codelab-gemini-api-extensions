@@ -1,12 +1,11 @@
 "use client";
 
 import { FileInputContainer } from "@/components/file-input-container";
+import MarkdownContainer from "@/components/markdown-container";
 import { FirebaseUserContext } from "@/lib/firebase-user";
 import {
   CollectionReference,
-  FieldValue,
   Timestamp,
-  addDoc,
   collection,
   deleteDoc,
   doc,
@@ -84,7 +83,7 @@ export default function Gallery() {
     return unsubscribe;
   }, []);
 
-  const storageRef = useMemo(() => ref(getStorage(), "images"), []);
+  const storageRef = useMemo(() => ref(getStorage(), "gallery"), []);
 
   const user = useContext(FirebaseUserContext);
   const uid = user.currentUser?.uid;
@@ -94,29 +93,32 @@ export default function Gallery() {
       const newUploadDocRef = doc(imagesCollection);
       const newUploadStorageRef = ref(
         storageRef,
-        `${newUploadDocRef.id}/${file.name}`
+        `${uid}/${newUploadDocRef.id}-${file.name}`
       );
-      await setDoc(newUploadDocRef, {
-        uid,
-        createTime: serverTimestamp(),
+      // await setDoc(newUploadDocRef, {
+      //   uid,
+      //   createTime: serverTimestamp(),
+      // });
+
+      const uploadTask = uploadBytesResumable(newUploadStorageRef, file);
+      uploadTask.on("state_changed", (snapshot) => {
+        setProgress((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
       });
 
-      await uploadBytesResumable(newUploadStorageRef, file).on(
-        "state_changed",
-        (snapshot) => {
-          setProgress((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-        }
-      );
+      const uploadSnaphsot = await uploadTask;
+      console.log("Upload complete", uploadSnaphsot);
 
       return new Promise<undefined>((resolve) => {
         // Wait for recently file to become available before updating the doc.
         setTimeout(() => {
-          updateDoc(newUploadDocRef, {
+          setDoc(newUploadDocRef, {
+            uid,
+            createTime: serverTimestamp(),
             image: newUploadStorageRef.toString(),
             published: true,
           });
           resolve(undefined);
-        }, 1000);
+        }, 2000);
       });
     },
     [uid]
@@ -124,6 +126,7 @@ export default function Gallery() {
 
   const deleteImage = useCallback(
     async (data: FirestoreImageData) => {
+      console.log("delete", data);
       if (data.image) {
         const storageRef = ref(getStorage(), data.image);
         await deleteObject(storageRef);
@@ -135,6 +138,7 @@ export default function Gallery() {
 
   const flagImage = useCallback(
     async (data: FirestoreImageData) => {
+      console.log("flag", data);
       await updateDoc(doc(imagesCollection, data.id), {
         published: false,
         flagUid: uid,
@@ -148,16 +152,21 @@ export default function Gallery() {
       {images.map((image) => (
         <div
           key={image.id}
-          className="w-full flex justify-start items-center gap-4 my-4 px-4 group"
+          className={`w-full flex justify-start items-center gap-4 my-4 px-4 group ${
+            image.published ? "" : "bg-red-900"
+          }`}
         >
           {image.image && <img src={image.image} alt="Image" width={200} />}
-          <div className="flex-1">{image.output}</div>
+          <div className="flex-1">
+            <MarkdownContainer
+              markdown={image.output || ""}
+            ></MarkdownContainer>
+          </div>
           {image.id && image.uid === uid && (
             <button
               type="button"
-              className="ml-2 font-bold text-xl text-red-900 group-hover:text-red-600 opacity-60 hover:opacity-100"
-              aria-label="Delete message"
-              title="Delete message"
+              className="ml-2 font-bold text-xl text-red-600 opacity-60 group-hover:opacity-100"
+              title="Delete image"
               onClick={() => deleteImage(image)}
             >
               x
@@ -167,8 +176,7 @@ export default function Gallery() {
             <button
               type="button"
               className="ml-2 font-bold text-xl text-red-900 group-hover:text-red-600 opacity-60 hover:opacity-100"
-              aria-label="Delete message"
-              title="Delete message"
+              title="Flag image as inapropriate"
               onClick={() => flagImage(image)}
             >
               🚩

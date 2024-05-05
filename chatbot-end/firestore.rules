@@ -2,19 +2,23 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    match /bot/{document=**} {
-      // Anyone can read the documents the `bot` collection
-      allow read: if true;
-      // No users can write to the bot collection
-      // All writes come from a Function
-      allow write: if false;
-    }
-
     match /users/{uid}/{document=**} {
-      // Documents in `messages` subcollection are accessed by that user
-      // Once created, documents cannot be edited or deleted.
       allow read, write: if request.auth.uid == uid;
+    }
+    
+    match /gallery/{id} {
+      allow read: if request.auth != null;
+      
+      allow create: if
+        request.resource.data.uid == request.auth.uid &&
+        request.resource.data.keys().hasOnly(["published", "uid", "createTime", "image"]);
+
+      allow update: if
+        request.resource.data.published == false &&
+        request.resource.data.flagUid == request.auth.uid &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["published", "flagUid"]);
+
+      allow delete: if resource.data.uid == request.auth.uid;
     }
   }
 }

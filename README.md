@@ -1,8 +1,6 @@
-# AI Extensions Codelab
+# Build AI-powered web apps with Gemini API Firebase Extensions
 
-This is the codelab code for Gemini API extensions
-
-[Open the repo in Project IDX](https://idx.google.com/import?url=https://github.com/FirebaseExtended/codelab-gemini-api-extensions/archive/refs/heads/)
+This is the code for [Build AI-powered web apps with Gemini API Firebase Extensions](https://firebase.google.com/codelabs/gemini-api-extensions-web) codelab.
 
 ## Source Code Headers
 
