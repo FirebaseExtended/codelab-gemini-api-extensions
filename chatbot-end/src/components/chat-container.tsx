@@ -81,7 +81,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
                     {message.id && (
                       <button
                         type="button"
-                        className="ml-2 font-bold text-xl text-red-100 group-hover:text-red-600 opacity-60 hover:opacity-100"
+                        className="ml-2 font-bold text-xl text-red-600 opacity-60 group-hover:opacity-100"
                         aria-label="Delete message"
                         title="Delete message"
                         onClick={() => onMessageDelete(message.id || "")}

@@ -95,10 +95,6 @@ export default function Gallery() {
         storageRef,
         `${uid}/${newUploadDocRef.id}-${file.name}`
       );
-      // await setDoc(newUploadDocRef, {
-      //   uid,
-      //   createTime: serverTimestamp(),
-      // });
 
       const uploadTask = uploadBytesResumable(newUploadStorageRef, file);
       uploadTask.on("state_changed", (snapshot) => {
