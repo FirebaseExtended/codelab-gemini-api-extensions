@@ -1,4 +1,4 @@
-# App end state
+# App start state
 
 ## Getting started
 

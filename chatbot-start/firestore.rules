@@ -1,0 +1,24 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid}/{document=**} {
+      allow read, write: if request.auth.uid == uid;
+    }
+    
+    match /gallery/{id} {
+      allow read: if request.auth != null;
+      
+      allow create: if
+        request.resource.data.uid == request.auth.uid &&
+        request.resource.data.keys().hasOnly(["published", "uid", "createTime", "image"]);
+
+      allow update: if
+        request.resource.data.published == false &&
+        request.resource.data.flagUid == request.auth.uid &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["published", "flagUid"]);
+
+      allow delete: if resource.data.uid == request.auth.uid;
+    }
+  }
+}
