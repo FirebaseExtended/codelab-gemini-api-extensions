@@ -69,7 +69,7 @@ const ChatPage = () => {
           id: doc.id,
           // TODO: 2. Replace code next line with this:
           // ...prepareMessage(doc.data()),
-          ...doc.data(),
+          ...prepareMessage(doc.data()),
         }));
         console.log(
           "Message doc changes: ",
@@ -90,7 +90,7 @@ const ChatPage = () => {
     const newMessageRef = await addDoc(messagesCollection, {
       // TODO: 1. Replace code next line with this:
       // prompt: preparePrompt(userMsg, messages),
-      prompt: userMsg,
+      prompt: preparePrompt(userMsg, messages),
     });
     console.log("New message added with ID: ", newMessageRef.id);
   };
